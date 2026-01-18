@@ -1,0 +1,30 @@
+require "nvchad.mappings"
+
+-- add yours here
+
+local map = vim.keymap.set
+
+map("n", ";", ":", { desc = "CMD enter command mode" })
+map("i", "jk", "<ESC>")
+
+-- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+
+-- Code Runner: Compile and Run in external Kitty terminal
+map("n", "<leader>r", function()
+  local filepath = vim.fn.expand("%:p")
+  
+  -- Save file first
+  vim.cmd("write")
+  
+  -- Show notification
+  vim.notify("🚀 Ejecutando: " .. vim.fn.expand("%:t"), vim.log.levels.INFO)
+  
+  -- Execute script completely detached from nvim
+  vim.loop.spawn("bash", {
+    args = {"-c", string.format("'%s' '%s' &", 
+      vim.fn.expand("~/.config/hypr/UserScripts/CodeRunner.sh"),
+      filepath
+    )},
+    detach = true
+  })
+end, { desc = "Compile and Run code" })
